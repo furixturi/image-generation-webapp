@@ -1,12 +1,23 @@
 from typing import Union
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 import utils
 
 app = FastAPI()
 
+# Support CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
+
+# Routes
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
