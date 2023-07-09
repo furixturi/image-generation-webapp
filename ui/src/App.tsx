@@ -30,6 +30,9 @@ function App() {
         await fetch(`http://127.0.0.1:8000/generate-image?prompt=${prompt}`)
       ).json();
       console.log(response);
+      const lastPrompt = response["prompt"];
+      const imgBase64 = response["img_base64"];
+      setImgSrc(`data:image/png;base64, ${imgBase64}`);
     } catch (err: any) {
       // catch any runtime error
       console.log(err.message);
@@ -65,7 +68,6 @@ function App() {
         />
       ) : imgSrc ? (
         <Box boxSize={"l"} marginTop={5}>
-          {/* <Image src={`data:image/png;base64,${imageData}`} /> */}
           <Image src={imgSrc} />
         </Box>
       ) : null}

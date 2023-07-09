@@ -2,6 +2,8 @@ import boto3
 import json
 from PIL import Image
 import numpy as np
+from io import BytesIO
+import base64
 
 endpoint_name = "jumpstart-dft-stable-diffusion-v2-1-base"
 client = boto3.client("runtime.sagemaker")
@@ -24,7 +26,18 @@ def parse_response(query_response):
     return response_dict["generated_image"], response_dict["prompt"]
 
 
-def save_image(pixels):
-    arr = np.array(pixels, dtype=np.uint8)
+def pixel_to_image(pixel_array):
+    arr = np.array(pixel_array, dtype=np.uint8)
     img = Image.fromarray(arr)
-    img.save("new.png")
+    return img
+
+
+def save_image(img, filePath="generated_images/new.png"):
+    img.save(filePath)
+
+
+def image_to_base64_str(img, format="PNG"):
+    buffered = BytesIO()
+    img.save(buffered, format=format)
+    img_str = base64.b64encode(buffered.getvalue())
+    return img_str

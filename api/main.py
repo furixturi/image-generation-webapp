@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 import utils
+import datetime
 
 app = FastAPI()
 
@@ -30,6 +31,12 @@ def read_item(item_id: int, q: Union[str, None] = None):
 
 @app.get("/generate-image")
 def generate_image(prompt: str):
-    image, prmpt = utils.parse_response(utils.query_endpoint(prompt))
-    utils.save_image(image)
-    return {"prompt": prmpt}
+    pixel_array, prmpt = utils.parse_response(utils.query_endpoint(prompt))
+    image = utils.pixel_to_image(pixel_array)
+
+    utils.save_image(
+        image, filePath=f"generated_images/{str(datetime.datetime.now())}.png"
+    )
+    img_str = utils.image_to_base64_str(image)
+
+    return {"prompt": prmpt, "img_base64": img_str}
